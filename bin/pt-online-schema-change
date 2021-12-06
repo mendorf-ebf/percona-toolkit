@@ -2288,7 +2288,10 @@ sub get_cxn_params {
          . join(';', map  { "$opts{$_}->{dsn}=$info->{$_}" }
                      grep { defined $info->{$_} }
                      qw(F h P S A))
-         . ';mysql_read_default_group=client'
+### hotfix (workaround) for encrypted transport to db.hosting.ebf.de due to still existing Perl DBD bug - see https://jira.mariadb.org/browse/MDEV-16396
+### original line was:
+###         . ';mysql_read_default_group=client'
+         . ';mysql_read_default_group=client;mysql_ssl=1;mysql_ssl_verify_server_cert=1;mysql_ssl_ca_file=/etc/ssl/certs/EBF_Root_CA_1.pem'
          . ($info->{L} ? ';mysql_local_infile=1' : '');
    }
    PTDEBUG && _d($dsn);
